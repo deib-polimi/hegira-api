@@ -1,0 +1,22 @@
+<web-app>
+  <display-name>it.polimi.hegira.api</display-name>
+  <servlet>
+  	<servlet-name>JAX-RS Servlet</servlet-name>
+  	<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+  	
+  	<init-param>
+		<param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+		<param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
+    </init-param>
+    
+  	<init-param>
+		<param-name>com.sun.jersey.config.property.packages</param-name>
+		<param-value>it.polimi.hegira.api</param-value>
+	</init-param>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>JAX-RS Servlet</servlet-name>
+  	<url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>
