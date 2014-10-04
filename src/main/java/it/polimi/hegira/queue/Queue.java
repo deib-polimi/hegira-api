@@ -94,4 +94,8 @@ public class Queue {
 	public static void main(String args[]){
 		System.out.println(PropertiesManager.getQueueProperty("host"));
 	}
+	
+	public QueueingConsumer getConsumer(){
+		return consumer;
+	}
 }

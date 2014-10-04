@@ -16,3 +16,5 @@ credentials.properties
 
 #MAC metadata
 .DS_Store
+
+target/
