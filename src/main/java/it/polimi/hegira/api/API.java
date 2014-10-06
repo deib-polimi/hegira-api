@@ -19,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
@@ -27,6 +28,8 @@ import org.apache.log4j.PropertyConfigurator;
  */
 @Path("/api")
 public class API {
+	private transient Logger log = Logger.getLogger(API.class);
+	
 	@GET
 	@Produces({ MediaType.TEXT_PLAIN })
 	public String sayPlainTextHello() {
@@ -80,6 +83,18 @@ public class API {
 				/**
 				 * TODO: Send migration message to the service-queue.
 				 */
+				try {
+					Queue queue = new Queue();
+					if(queue.checkPresence()){
+						log.info("Components present");
+					}
+				} catch (QueueException e) {
+					
+					return new Status(Constants.STATUS_ERROR, 
+							DefaultErrors.getErrorNumber(DefaultErrors.queueError),
+							DefaultErrors.getErrorMessage(DefaultErrors.queueError));
+				}
+				
 				
 				return new Status(Constants.STATUS_SUCCESS, sb.toString());
 			} else {
