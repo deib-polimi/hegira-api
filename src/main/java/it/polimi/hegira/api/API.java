@@ -3,6 +3,8 @@
  */
 package it.polimi.hegira.api;
 
+import java.util.List;
+
 import it.polimi.hegira.exceptions.QueueException;
 import it.polimi.hegira.queue.Queue;
 import it.polimi.hegira.utils.Constants;
@@ -28,7 +30,7 @@ public class API {
 	@GET
 	@Produces({ MediaType.TEXT_PLAIN })
 	public String sayPlainTextHello() {
-		return "Hello Jersey";
+		return "Hello from Hegira!";
 	}
 	
 	@GET
@@ -37,10 +39,7 @@ public class API {
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
 		
-		Queue.main(null);
-		
-		return "<html>" + "<title>" + "Hello Jersey" + "</title>"
-		        + "<body><h1>" + "Hello Jersey" + "</body></h1>" + "</html> ";
+		return Constants.getAPIpage();
 	}
 	
 	@GET
@@ -50,10 +49,48 @@ public class API {
 		try {
 			Queue queue = new Queue();
 			queue.publish("toComponents", "Ciao".getBytes());
-			return new Status("OK");
+			return new Status(Constants.STATUS_SUCCESS);
 		} catch (QueueException e) {
 			return new Status("ERROR",DefaultErrors.getErrorMessage(DefaultErrors.queueError), DefaultErrors.getErrorNumber(DefaultErrors.queueError));
 		}
 	}
 	
+	
+	@POST
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Path("/switchover")
+	public Status switchOver(@QueryParam("source") String source,
+							@QueryParam("destination") final List<String> destination,
+							@QueryParam("threads") int threads){
+		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
+		PropertyConfigurator.configure(logs);
+		//BasicConfigurator.configure();
+		//Check input params number
+		if(source != null && destination != null && destination.size()>=1){
+			//check input content
+			boolean source_supported = Constants.isSupported(source);
+			List<String> supported_dest = Constants.getSupportedDBfromList(destination);
+			if(source_supported && supported_dest.size() >= 1){
+				String message = "Mapping from "+source+ " to ";
+				StringBuilder sb = new StringBuilder(message);
+				for(String sup : supported_dest){
+					sb.append(sup+" ");
+				}
+				
+				/**
+				 * TODO: Send migration message to the service-queue.
+				 */
+				
+				return new Status(Constants.STATUS_SUCCESS, sb.toString());
+			} else {
+				//Cannot switchover - Not supported databases
+				return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.databaseNotSupported),
+				DefaultErrors.getErrorNumber(DefaultErrors.databaseNotSupported));
+			}
+		} else{
+			//Cannot switchover - Few parameters
+			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.fewParameters),
+			DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
+		}
+	}
 }
