@@ -12,7 +12,7 @@ import it.polimi.hegira.exceptions.QueueException;
 import junit.framework.TestCase;
 
 /**
- * @author marco
+ * @author Marco Scavuzzo
  *
  */
 public class TestQueue extends TestCase {
