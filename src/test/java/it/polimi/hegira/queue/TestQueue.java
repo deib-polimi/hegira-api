@@ -3,12 +3,15 @@
  */
 package it.polimi.hegira.queue;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.QueueingConsumer.Delivery;
 import com.rabbitmq.client.ShutdownSignalException;
 
 import it.polimi.hegira.exceptions.QueueException;
+import it.polimi.hegira.utils.Constants;
 import junit.framework.TestCase;
 
 /**
@@ -16,12 +19,15 @@ import junit.framework.TestCase;
  *
  */
 public class TestQueue extends TestCase {
-
+	
 	/**
 	 * Test method for {@link it.polimi.hegira.queue.Queue#publish(java.lang.String, byte[])}.
 	 * @throws QueueException 
 	 */
 	public void testPublish() {
+		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
+		PropertyConfigurator.configure(logs);
+		
 		String RK = "toApiServer", MSG="test message";
 		try {
 			Queue queue = new Queue();

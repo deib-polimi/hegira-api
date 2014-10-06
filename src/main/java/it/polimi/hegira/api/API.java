@@ -85,12 +85,12 @@ public class API {
 			} else {
 				//Cannot switchover - Not supported databases
 				return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.databaseNotSupported),
-				DefaultErrors.getErrorNumber(DefaultErrors.databaseNotSupported));
+									DefaultErrors.getErrorNumber(DefaultErrors.databaseNotSupported));
 			}
 		} else{
 			//Cannot switchover - Few parameters
 			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.fewParameters),
-			DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
+								DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
 		}
 	}
 }
