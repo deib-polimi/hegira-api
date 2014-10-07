@@ -3,12 +3,15 @@
  */
 package it.polimi.hegira.api;
 
+import java.io.IOException;
 import java.util.List;
 
 import it.polimi.hegira.exceptions.QueueException;
 import it.polimi.hegira.queue.Queue;
+import it.polimi.hegira.queue.ServiceQueueMessage;
 import it.polimi.hegira.utils.Constants;
 import it.polimi.hegira.utils.DefaultErrors;
+import it.polimi.hegira.utils.DefaultSerializer;
 
 import javax.servlet.ServletContextEvent;
 import javax.ws.rs.DELETE;
@@ -89,12 +92,24 @@ public class API implements javax.servlet.ServletContextListener {
 					
 					if(queue.checkPresence()){
 						log.info("Components present");
+						ServiceQueueMessage sqm = new ServiceQueueMessage();
+						sqm.setCommand("switchover");
+						sqm.setSource(source);
+						sqm.setDestination(destination);
+						sqm.setThreads(threads);
+						
+						byte[] ssqm = DefaultSerializer.serialize(sqm);
+						queue.publish("SRC", ssqm);
+						queue.publish("TWC", ssqm);
 					}
 				} catch (QueueException e) {
 					
 					return new Status(Constants.STATUS_ERROR, 
 							DefaultErrors.getErrorNumber(DefaultErrors.queueError),
 							DefaultErrors.getErrorMessage(DefaultErrors.queueError));
+				} catch (IOException e) {
+					e.printStackTrace();
+					return new Status(Constants.STATUS_ERROR, e.getMessage());
 				}
 				
 				
