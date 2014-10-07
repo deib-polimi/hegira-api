@@ -24,8 +24,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
+ * Class providing the REST API for Hegira.
  * @author Marco Scavuzzo
- *
  */
 @Path("/api")
 public class API implements javax.servlet.ServletContextListener {
@@ -112,18 +112,19 @@ public class API implements javax.servlet.ServletContextListener {
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void contextDestroyed(ServletContextEvent arg0) {}
 
+	/**
+	 * Launched during application boot (see {@link src/main/webapp/WEB-INF/web.xml}).
+	 * It instantiates the Queue object which, on construction, binds the Exchange to 
+	 * the queue "Q1"
+	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("contextInitialized method called");
 		try {
 			queue = new Queue();
 		} catch (QueueException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

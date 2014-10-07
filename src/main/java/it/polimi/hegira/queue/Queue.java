@@ -56,6 +56,7 @@ public class Queue {
 			 * java.util.Map<java.lang.String,java.lang.Object> arguments) 
 			 */
 			String queueName = channelConsume.queueDeclare("Q1", false, false, false, null).getQueue();
+			
 			/**
 			 * routing key bindings: relationship between an exchange and a queue.
 			 */
