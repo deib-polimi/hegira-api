@@ -10,6 +10,7 @@ import it.polimi.hegira.queue.Queue;
 import it.polimi.hegira.utils.Constants;
 import it.polimi.hegira.utils.DefaultErrors;
 
+import javax.servlet.ServletContextEvent;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -27,8 +28,9 @@ import org.apache.log4j.PropertyConfigurator;
  *
  */
 @Path("/api")
-public class API {
+public class API implements javax.servlet.ServletContextListener {
 	private transient Logger log = Logger.getLogger(API.class);
+	private static Queue queue;
 	
 	@GET
 	@Produces({ MediaType.TEXT_PLAIN })
@@ -84,7 +86,7 @@ public class API {
 				 * TODO: Send migration message to the service-queue.
 				 */
 				try {
-					Queue queue = new Queue();
+					
 					if(queue.checkPresence()){
 						log.info("Components present");
 					}
@@ -106,6 +108,23 @@ public class API {
 			//Cannot switchover - Few parameters
 			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.fewParameters),
 								DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
+		}
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		System.out.println("contextInitialized method called");
+		try {
+			queue = new Queue();
+		} catch (QueueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

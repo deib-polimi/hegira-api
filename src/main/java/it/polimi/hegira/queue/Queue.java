@@ -49,12 +49,19 @@ public class Queue {
 			channelConsume.exchangeDeclare(EXCHANGE_NAME, "direct");
 			log.debug("Consuming channel created. Exchange: "+EXCHANGE_NAME+" type: direct");
 			
-			String queueName = channelConsume.queueDeclare().getQueue();
+			//String queueName = channelConsume.queueDeclare().getQueue();
+			/**
+			 * queueDeclare(java.lang.String queue, boolean durable, 
+			 * boolean exclusive, boolean autoDelete, 
+			 * java.util.Map<java.lang.String,java.lang.Object> arguments) 
+			 */
+			String queueName = channelConsume.queueDeclare("Q1", false, false, false, null).getQueue();
 			/**
 			 * routing key bindings: relationship between an exchange and a queue.
 			 */
 			channelConsume.queueBind(queueName, EXCHANGE_NAME, LISTEN_RK);
 			log.debug("Binding the consuming channel. ROUTING KEY: "+LISTEN_RK+" QUEUE NAME: "+queueName);
+			
 			
 			/**
 			 * Telling the server to deliver us the messages from the queue. 
@@ -113,6 +120,7 @@ public class Queue {
 			try {
 				delivery = consumer.nextDelivery();
 				String message = new String(delivery.getBody());
+				log.debug("Got message: "+message);
             		String routingKey = delivery.getEnvelope().getRoutingKey();
             		if(message.equals("SRC") || message.equals("TWC")){
             			i++;
