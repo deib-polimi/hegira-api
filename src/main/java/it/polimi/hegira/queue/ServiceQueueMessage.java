@@ -5,6 +5,7 @@ package it.polimi.hegira.queue;
 
 import it.polimi.hegira.utils.Constants;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,9 @@ import java.util.List;
  * (To be serialized with the standard Java serialization {@link it.polimi.hegira.utils.DefaultSerializer})
  * @author Marco Scavuzzo
  */
-public class ServiceQueueMessage {
+public class ServiceQueueMessage implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	private String source;
 	private List<String> destination;
 	private int threads;
