@@ -51,12 +51,17 @@ public class API implements javax.servlet.ServletContextListener {
 	}
 	
 	@GET
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("/publish")
-	public Status publish(){
+	public Status publish() throws IOException{
 		try {
-			Queue queue = new Queue();
-			queue.publish("toComponents", "Ciao".getBytes());
+			//Queue queue = new Queue();
+			ServiceQueueMessage sqm = new ServiceQueueMessage();
+			sqm.setCommand("Ciao Component!");
+			byte[] ssqm = DefaultSerializer.serialize(sqm);
+			
+			queue.publish("SRC", ssqm);
+			queue.publish("TWC", ssqm);
 			return new Status(Constants.STATUS_SUCCESS);
 		} catch (QueueException e) {
 			return new Status("ERROR",DefaultErrors.getErrorMessage(DefaultErrors.queueError), DefaultErrors.getErrorNumber(DefaultErrors.queueError));
@@ -85,9 +90,6 @@ public class API implements javax.servlet.ServletContextListener {
 					sb.append(sup+" ");
 				}
 				
-				/**
-				 * TODO: Send migration message to the service-queue.
-				 */
 				try {
 					
 					if(queue.checkPresence()){
