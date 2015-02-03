@@ -20,23 +20,31 @@ public class PropertiesManager {
 	private static Logger log = Logger.getLogger(PropertiesManager.class);
 
 	
-	public static String getQueueProperty(String propertyKey){
+	private static String getPropertyFromFile(String file, String propertyKey){
 		
 		Properties props = new Properties();
-		URL resource = Thread.currentThread().getContextClassLoader().getResource(Constants.QUEUE_PATH);
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(file);
 		
 		try {
 			InputStream isr = new FileInputStream(resource.getFile());
 			props.load(isr);
 			return props.getProperty(propertyKey);
 		} catch (FileNotFoundException | NullPointerException e) {
-			log.error(Constants.QUEUE_PATH+" file must exist!");
+			log.error(file+" file must exist!");
 		} catch (IOException e) {
-			log.error("Unable to read file "+Constants.QUEUE_PATH+"!");
+			log.error("Unable to read file "+file+"!");
 		} finally {
 			props=null;
 		}
 		
 		return null;
+	}
+	
+	public static String getQueueProperty(String propertyKey){
+		return getPropertyFromFile(Constants.QUEUE_PATH, propertyKey);
+	}
+	
+	public static String getZkProperty(String propertyKey){
+		return getPropertyFromFile(Constants.ZK_PATH, propertyKey);
 	}
 }
