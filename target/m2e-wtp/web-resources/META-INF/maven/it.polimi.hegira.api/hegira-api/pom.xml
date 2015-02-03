@@ -18,7 +18,14 @@
       <layout>default</layout>
 
     </repository>
-
+	<repository>
+		<id>deib-polimi-releases</id>
+		<url>https://github.com/deib-polimi/deib-polimi-mvn-repo/raw/master/releases</url>
+	</repository>
+	<repository>
+		<id>deib-polimi-snapshots</id>
+		<url>https://github.com/deib-polimi/deib-polimi-mvn-repo/raw/master/snapshots</url>
+	</repository>
   </repositories>
   
   <dependencies>
@@ -70,6 +77,11 @@
 	    <groupId>com.google.guava</groupId>
 	    <artifactId>guava</artifactId>
 	    <version>18.0</version>
+	</dependency>
+	<dependency>
+		<groupId>it.polimi.hegira</groupId>
+		<artifactId>vdp</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
   </dependencies>
   
