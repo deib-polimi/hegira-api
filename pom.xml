@@ -95,6 +95,13 @@
 		<artifactId>zkWrapper-Client</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
 	</dependency>
+	
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.0.1</version>
+	    <scope>provided</scope>
+	</dependency>
   </dependencies>
   
   <build>
