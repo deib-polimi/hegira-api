@@ -24,6 +24,11 @@ public class Constants {
 	public static final String QUEUE_PATH = "queue.properties";
 	
 	/**
+	 * ZOOKEEPER FILE PATH
+	 */
+	public static final String ZK_PATH = "zookeeper.properties";
+	
+	/**
 	* STATUS RESPONSE
 	*/
 	public static final String STATUS_SUCCESS = "OK";
