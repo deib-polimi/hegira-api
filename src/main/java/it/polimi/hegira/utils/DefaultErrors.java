@@ -10,6 +10,8 @@ public class DefaultErrors {
 	public static String databaseNotSupported = "Error 7: One or all of the selected databases are not supported";
 	public static String fewParameters = "Error 8: Too few parameters. Check the documentation";
 	public static String queueError = "Error 9: Impossible to access the queue.";
+	public static String vdpError = "Error 10: Couldn't set VDP size.";
+	
 	
 	public static String getErrorNumber(String error){
 		int start = error.lastIndexOf("Error ");

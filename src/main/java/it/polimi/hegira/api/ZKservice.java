@@ -50,8 +50,10 @@ public class ZKservice {
 					e.getMessage()));
 			log.error("Request "+Constants.STATUS_ERROR, e);
 		}finally{
-			if(zKclient!=null)	
+			if(zKclient!=null){	
 				zKclient.close();
+				zKclient=null;
+			}
 		}
 		return zKobject;
 	}
@@ -78,8 +80,10 @@ public class ZKservice {
 					e.getMessage()));
 			log.error("Request "+Constants.STATUS_ERROR, e);
 		}finally{
-			if(zKclient!=null)	
+			if(zKclient!=null){	
 				zKclient.close();
+				zKclient=null;
+			}
 		}
 		
 		return zKobject;
@@ -106,8 +110,10 @@ public class ZKservice {
 					e.getMessage()));
 			log.error("Request "+Constants.STATUS_ERROR, e);
 		}finally{
-			if(zKclient!=null)	
+			if(zKclient!=null){	
 				zKclient.close();
+				zKclient=null;
+			}
 		}
 		return zKobject;
 	}
