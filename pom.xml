@@ -93,7 +93,13 @@
 	<dependency>
 		<groupId>it.polimi.hegira</groupId>
 		<artifactId>zkWrapper-Client</artifactId>
-		<version>0.0.2-SNAPSHOT</version>
+		<version>0.0.3-SNAPSHOT</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>it.polimi.hegira</groupId>
+		<artifactId>zkWrapper-Server</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
 	</dependency>
 	
 	<dependency>
