@@ -12,6 +12,9 @@ import it.polimi.hegira.queue.ServiceQueueMessage;
 import it.polimi.hegira.utils.Constants;
 import it.polimi.hegira.utils.DefaultErrors;
 import it.polimi.hegira.utils.DefaultSerializer;
+import it.polimi.hegira.utils.PropertiesManager;
+import it.polimi.hegira.zkWrapper.ZKclient;
+import it.polimi.hegira.zkWrapper.ZKserver;
 
 import javax.servlet.ServletContextEvent;
 import javax.ws.rs.DELETE;
@@ -127,6 +130,81 @@ public class API implements javax.servlet.ServletContextListener {
 								DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
 		}
 	}
+	
+	
+	@POST
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Path("/switchoverPartitioned")
+	public Status switchOverPartitioned(@QueryParam("source") String source,
+							@QueryParam("destination") final List<String> destination,
+							@QueryParam("threads") int threads,
+							@QueryParam("vdpSize") int vdpSize){
+		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
+		PropertyConfigurator.configure(logs);
+		//BasicConfigurator.configure();
+		//Check input params number
+		if(source != null && destination != null && destination.size()>=1){
+			//check input content
+			boolean source_supported = Constants.isSupported(source);
+			List<String> supported_dest = Constants.getSupportedDBfromList(destination);
+			if(source_supported && supported_dest.size() >= 1){
+				String message = "Mapping from "+source+ " to ";
+				StringBuilder sb = new StringBuilder(message);
+				for(String sup : supported_dest){
+					sb.append(sup+" ");
+				}
+				
+				ZKserver zKserver = new ZKserver(PropertiesManager.getZkProperty("connectString"));
+				try {
+					if(vdpSize<2 || vdpSize>5)
+						return new Status(Constants.STATUS_ERROR, 
+								"Provide a reasonable exponent p so that 10^p represets"
+								+ " a resonable VDP size (i.e., 1 < p < 6)",
+								"UNKOWN");
+					zKserver.setVDPsize(vdpSize);
+				} catch (Exception e1) {
+					return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.vdpError),
+							DefaultErrors.getErrorNumber(DefaultErrors.vdpError));
+				}
+				
+				try {
+					
+					if(queue.checkPresence()){
+						log.info("Components present");
+						ServiceQueueMessage sqm = new ServiceQueueMessage();
+						sqm.setCommand("switchoverPartitioned");
+						sqm.setSource(source);
+						sqm.setDestination(destination);
+						sqm.setThreads(threads);
+						
+						byte[] ssqm = DefaultSerializer.serialize(sqm);
+						queue.publish("SRC", ssqm);
+						queue.publish("TWC", ssqm);
+					}
+				} catch (QueueException e) {
+					
+					return new Status(Constants.STATUS_ERROR, 
+							DefaultErrors.getErrorNumber(DefaultErrors.queueError),
+							DefaultErrors.getErrorMessage(DefaultErrors.queueError));
+				} catch (IOException e) {
+					e.printStackTrace();
+					return new Status(Constants.STATUS_ERROR, e.getMessage());
+				}
+				
+				
+				return new Status(Constants.STATUS_SUCCESS, sb.toString());
+			} else {
+				//Cannot switchover - Not supported databases
+				return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.databaseNotSupported),
+									DefaultErrors.getErrorNumber(DefaultErrors.databaseNotSupported));
+			}
+		} else{
+			//Cannot switchover - Few parameters
+			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.fewParameters),
+								DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
+		}
+	}
+	
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {}
