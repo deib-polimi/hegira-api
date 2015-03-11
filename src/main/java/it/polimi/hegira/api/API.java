@@ -13,14 +13,11 @@ import it.polimi.hegira.utils.Constants;
 import it.polimi.hegira.utils.DefaultErrors;
 import it.polimi.hegira.utils.DefaultSerializer;
 import it.polimi.hegira.utils.PropertiesManager;
-import it.polimi.hegira.zkWrapper.ZKclient;
 import it.polimi.hegira.zkWrapper.ZKserver;
 
 import javax.servlet.ServletContextEvent;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -30,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
- * Class providing the REST API for Hegira.
+ * REST API for data migration and synchronization in Hegira 4Clouds.
  * @author Marco Scavuzzo
  */
 @Path("/api")
@@ -38,24 +35,24 @@ public class API implements javax.servlet.ServletContextListener {
 	private transient Logger log = Logger.getLogger(API.class);
 	private static Queue queue;
 	
-	@GET
-	@Produces({ MediaType.TEXT_PLAIN })
+	//@GET
+	//@Produces({ MediaType.TEXT_PLAIN })
 	public String sayPlainTextHello() {
 		return "Hello from Hegira!";
 	}
 	
-	@GET
-	@Produces(MediaType.TEXT_HTML)
+	//@GET
+	//@Produces(MediaType.TEXT_HTML)
 	public String sayHtmlHello(){
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
 		
-		return Constants.getAPIpage();
+		return "Hello from Hegira!";
 	}
 	
-	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	@Path("/publish")
+	//@GET
+	//@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	//@Path("/publish")
 	public Status publish() throws IOException{
 		try {
 			//Queue queue = new Queue();
@@ -71,19 +68,30 @@ public class API implements javax.servlet.ServletContextListener {
 		}
 	}
 	
-	
+	/**
+	 * Instructs the components (SRC and TWC) to perform a complete <b>OFFLINE</b> data switch over from
+	 * the source to the destination databases.
+	 * This type of data migration is typically not recoverable, i.e., in case of a crash of a component
+	 * the data migration can be restarted from scratch. 
+	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
+	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
+	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
+	 * @return A Status object stating whether the command has been properly executed.
+	 */
 	@POST
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("/switchover")
 	public Status switchOver(@QueryParam("source") String source,
 							@QueryParam("destination") final List<String> destination,
 							@QueryParam("threads") int threads){
+		System.out.println("dentro switchover");
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
 		//BasicConfigurator.configure();
 		//Check input params number
 		if(source != null && destination != null && destination.size()>=1){
 			//check input content
+			System.out.println("controllo parametri");
 			boolean source_supported = Constants.isSupported(source);
 			List<String> supported_dest = Constants.getSupportedDBfromList(destination);
 			if(source_supported && supported_dest.size() >= 1){
@@ -94,7 +102,6 @@ public class API implements javax.servlet.ServletContextListener {
 				}
 				
 				try {
-					
 					if(queue.checkPresence()){
 						log.info("Components present");
 						ServiceQueueMessage sqm = new ServiceQueueMessage();
@@ -131,7 +138,18 @@ public class API implements javax.servlet.ServletContextListener {
 		}
 	}
 	
-	
+	/**
+	 * Instructs the components (SRC and TWC) to perform a complete <b>ONLINE</b> data switch over from
+	 * the source to the destination databases.
+	 * This type of data migration should be executed in case one wants also to take advantage of data <b>synchronization<b/>.
+	 * This type of data migration is recoverable, i.e., in case of a crash of a component
+	 * the data migration can be restarted from scratch. 
+	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
+	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
+	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
+	 * @param vdpSize The exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities). 
+	 * @return A Status object stating whether the command has been properly executed.
+	 */
 	@POST
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("/switchoverPartitioned")
