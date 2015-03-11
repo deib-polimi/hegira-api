@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wadl:application xmlns:wadl="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <wadl:doc xmlns:enunciate="http://enunciate.codehaus.org/" enunciate:generatedBy="Enunciate-1.29"/>
+  <wadl:grammars>
+    <wadl:include href="ns0.xsd"/>
+  </wadl:grammars>
+  <wadl:resources base="http://localhost:8080/hegira-api">
+    <wadl:resource path="/rest/api/switchover">
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Instructs the components (SRC and TWC) to perform a complete <b>OFFLINE</b> data switch over from]]>
+<![CDATA[the source to the destination databases.]]>
+<![CDATA[This type of data migration is typically not recoverable, i.e., in case of a crash of a component]]>
+<![CDATA[the data migration can be restarted from scratch.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="source" style="query">
+            <wadl:doc>
+              <![CDATA[The source database identifier (e.g., DATASTORE, TABLES).]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="destination" style="query">
+            <wadl:doc>
+              <![CDATA[The destination database identifier (e.g., DATASTORE, TABLES).]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="threads" style="query">
+            <wadl:doc>
+              <![CDATA[The number of TWT (i.e., the number of parallel threads writing towards the target database).]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A Status object stating whether the command has been properly executed.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="status"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/rest/api/switchoverPartitioned">
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Instructs the components (SRC and TWC) to perform a complete <b>ONLINE</b> data switch over from]]>
+<![CDATA[the source to the destination databases.]]>
+<![CDATA[This type of data migration should be executed in case one w]]>
+<![CDATA[ants also to take advantage of data <b>synchronization<b/>.]]>
+<![CDATA[This type of data migration is recoverable, i.e., in case of a crash of a component]]>
+<![CDATA[the data migration can be restarted from scratch.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="source" style="query">
+            <wadl:doc>
+              <![CDATA[The source database identifier (e.g., DATASTORE, TABLES).]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="destination" style="query">
+            <wadl:doc>
+              <![CDATA[The destination database identifier (e.g., DATASTORE, TABLES).]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="threads" style="query">
+            <wadl:doc>
+              <![CDATA[The number of TWT (i.e., the number of parallel threads writing towards the target database).]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="vdpSize" style="query">
+            <wadl:doc>
+              <![CDATA[The exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities).]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A Status object stating whether the command has been properly executed.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="status"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/rest/zkService/getId">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Returns a unique id to the caller for a given table.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="tableName" style="query">
+            <wadl:doc>
+              <![CDATA[The name of the table.]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[The unique id]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="ZKobject"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/rest/zkService/getRange">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Returns a range of maximum 100 (minimum 2) unique ids to the caller for a given table.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="tableName" style="query">
+            <wadl:doc>
+              <![CDATA[The name of the table.]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="offset" style="query">
+            <wadl:doc>
+              <![CDATA[the number of ids to be assigned (less than 101)]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[The first and the last ids in the assigned range.]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="ZKobject"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/rest/zkService/isSynchronizing">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Returns the status of Hegira, i.e., if it has been configured to synchronize data.]]>
+        </wadl:doc>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[<b>true</b> if it is synchronizing, <b>false</b> otherwise]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml" element="ZKobject"/>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+  </wadl:resources>
+</wadl:application>
