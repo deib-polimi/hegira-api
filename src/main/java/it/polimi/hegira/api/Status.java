@@ -21,6 +21,7 @@ public class Status {
 	}
 	public Status() {
 	}
+	@org.codehaus.enunciate.ClientName(value = "State")
 	public String getStatus() {
 		return status;
 	}
