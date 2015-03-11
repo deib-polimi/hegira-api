@@ -29,6 +29,11 @@
   </repositories>
   
   <dependencies>
+    <dependency> 
+        <groupId>org.codehaus.enunciate</groupId> 
+        <artifactId>enunciate-amf</artifactId> 
+        <version>1.29</version> 
+    </dependency>
   	<dependency>
   		<groupId>org.slf4j</groupId>
   		<artifactId>slf4j-log4j12</artifactId>
@@ -134,4 +139,18 @@
     </plugins>
     <finalName>Hegira :: API</finalName>
   </build>
+  
+   <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.enunciate</groupId>
+        <artifactId>maven-enunciate-plugin</artifactId>
+        <version>1.29</version>
+        <configuration>
+        </configuration>
+ 
+      </plugin>
+ 
+    </plugins>
+  </reporting>
 </project>
