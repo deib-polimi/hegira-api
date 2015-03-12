@@ -31,4 +31,12 @@ Maven generates a war archive which should be copied in ```webapps``` Tomcat fol
 After starting Tomcat hegira-api component should be available at: ```http://<tomcat-address>:<port>/<war_package_name>```
 
 ## Usage
-Rest API are described at: [http://deib-polimi.github.io/hegira-api/](http://deib-polimi.github.io/hegira-api/)
+Rest API are described at: [http://deib-polimi.github.io/hegira-api/](http://deib-polimi.github.io/hegira-api/).
+
+In particular, Rest API for data migration are described [here](http://deib-polimi.github.io/hegira-api/resource_API.html).
+
+
+hegira-api component also exposes a set of Rest API on top of Apache ZooKeeper, in order to allow PaaS applications to: 
+
+1. request new unique ids that allow Hegira 4Cloud to synchronize data across two databases. 
+2. Check the synchronization status.
