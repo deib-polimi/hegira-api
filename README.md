@@ -12,14 +12,14 @@ After having downloaded the source code two new files should be created under th
 ###### queue.properties
 Contains the properties to configure RabbitMQ. The only needed option to specify, so far, is the ip address of the broker:
 
-```
+```java
 host=<ip_address>
 ```
 
 ###### zookeeper.properties
 Contains the properties to configure ZooKeeper. The only needed option to specify, so far, is the ip address and the port of one of the ZooKeeper installation:
 
-```
+```java
 connectString=<ip_address>:<port>
 ```
 
@@ -36,7 +36,9 @@ Rest API are described at: [http://deib-polimi.github.io/hegira-api/](http://dei
 In particular, Rest API for data migration are described [here](http://deib-polimi.github.io/hegira-api/resource_API.html).
 
 
-hegira-api component also exposes a set of Rest API on top of Apache ZooKeeper, in order to allow PaaS applications to: 
+hegira-api component also exposes a set of [Rest API on top of Apache ZooKeeper](http://deib-polimi.github.io/hegira-api/resource_ZKservice.html), in order to allow PaaS applications to: 
 
 1. request new unique ids that allow Hegira 4Cloud to synchronize data across two databases. 
 2. Check the synchronization status.
+
+The same services are obtainable by IaaS applications by means of [zkWrapper-client](https://github.com/deib-polimi/hegira-zkWrapper-client) library.
