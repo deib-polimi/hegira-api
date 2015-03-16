@@ -10,7 +10,7 @@ After having downloaded the source code two new files should be created under th
 * zookeeper.properties
 
 ###### queue.properties
-Contains the properties to configure RabbitMQ. The only needed option to specify, so far, is the ip address of the broker:
+Contains the properties to configure RabbitMQ. Currently, the only needed property is the ip address of the broker:
 
 ```java
 host=<ip_address>
