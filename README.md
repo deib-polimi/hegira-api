@@ -27,8 +27,8 @@ connectString=<ip_address>:<port>
 The project is Maven compliant, hence by executing the command ```mvn clean package``` the proper packages will be created.
 
 ##### Deploy
-Maven generates a war archive which should be copied in ```webapps``` Tomcat folder.
-After starting Tomcat hegira-api component should be available at: ```http://<tomcat-address>:<port>/<war_package_name>```
+Maven generates a war archive (containing all the necessary dependencies) which should be copied in ```webapps``` Tomcat folder.
+After having started Tomcat, hegira-api component should be available at: ```http://<tomcat-address>:<port>/<war_package_name>```
 
 ## Usage
 Rest API are described at: [http://deib-polimi.github.io/hegira-api/](http://deib-polimi.github.io/hegira-api/).
@@ -38,7 +38,7 @@ In particular, Rest API for data migration are described [here](http://deib-poli
 
 hegira-api component also exposes a set of [Rest API on top of Apache ZooKeeper](http://deib-polimi.github.io/hegira-api/resource_ZKservice.html), in order to allow PaaS applications to: 
 
-1. request new unique ids that allow Hegira 4Cloud to synchronize data across two databases. 
+1. request new unique ids that allow Hegira 4Clouds to synchronize data across two databases. 
 2. Check the synchronization status.
 
 The same services are obtainable by IaaS applications by means of [zkWrapper-client](https://github.com/deib-polimi/hegira-zkWrapper-client) library.
