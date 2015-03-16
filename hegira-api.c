@@ -9,17 +9,17 @@ struct hegira_api_ns0_status {
 
 
   /**
-   * (no documentation provided)
+   * OK, WARNING or ERROR.
    */
   xmlChar *State;
 
   /**
-   * (no documentation provided)
+   * 
    */
   xmlChar *message;
 
   /**
-   * (no documentation provided)
+   * 
    */
   xmlChar *error_code;
 };
@@ -122,22 +122,22 @@ struct hegira_api_ns0_ZKobject {
 
 
   /**
-   * (no documentation provided)
+   * The lower extreme of the generated range of unique ids.
    */
   xmlChar *lowExtreme;
 
   /**
-   * (no documentation provided)
+   * The highest extreme of the generated range of unique ids.
    */
   xmlChar *highExtreme;
 
   /**
-   * (no documentation provided)
+   * The generated unique id.
    */
   xmlChar *id;
 
   /**
-   * (no documentation provided)
+   * The status given in response to the REST request.
    */
   struct hegira_api_ns0_status *requestStatus;
 };

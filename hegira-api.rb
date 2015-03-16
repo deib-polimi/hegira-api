@@ -75,13 +75,13 @@ module Api
   # 
   class ZKobject 
 
-    # (no documentation provided)
+    # The lower extreme of the generated range of unique ids.
     attr_accessor :lowExtreme
-    # (no documentation provided)
+    # The highest extreme of the generated range of unique ids.
     attr_accessor :highExtreme
-    # (no documentation provided)
+    # The generated unique id.
     attr_accessor :id
-    # (no documentation provided)
+    # The status given in response to the REST request.
     attr_accessor :requestStatus
 
     # the json hash for this ZKobject
@@ -138,11 +138,11 @@ module Api
   # 
   class Status 
 
-    # (no documentation provided)
+    # OK, WARNING or ERROR.
     attr_accessor :State
-    # (no documentation provided)
+    # 
     attr_accessor :message
-    # (no documentation provided)
+    # 
     attr_accessor :error_code
 
     # the json hash for this Status

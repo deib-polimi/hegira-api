@@ -10,7 +10,7 @@
 @implementation HEGIRA_APINS0ZKobject
 
 /**
- * (no documentation provided)
+ * The lower extreme of the generated range of unique ids.
  */
 - (NSString *) lowExtreme
 {
@@ -18,7 +18,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The lower extreme of the generated range of unique ids.
  */
 - (void) setLowExtreme: (NSString *) newLowExtreme
 {
@@ -28,7 +28,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The highest extreme of the generated range of unique ids.
  */
 - (NSString *) highExtreme
 {
@@ -36,7 +36,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The highest extreme of the generated range of unique ids.
  */
 - (void) setHighExtreme: (NSString *) newHighExtreme
 {
@@ -46,7 +46,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The generated unique id.
  */
 - (NSString *) identifier
 {
@@ -54,7 +54,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The generated unique id.
  */
 - (void) setIdentifier: (NSString *) newIdentifier
 {
@@ -64,7 +64,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The status given in response to the REST request.
  */
 - (HEGIRA_APINS0Status *) requestStatus
 {
@@ -72,7 +72,7 @@
 }
 
 /**
- * (no documentation provided)
+ * The status given in response to the REST request.
  */
 - (void) setRequestStatus: (HEGIRA_APINS0Status *) newRequestStatus
 {
@@ -543,7 +543,7 @@
 @implementation HEGIRA_APINS0Status
 
 /**
- * (no documentation provided)
+ * OK, WARNING or ERROR.
  */
 - (NSString *) State
 {
@@ -551,7 +551,7 @@
 }
 
 /**
- * (no documentation provided)
+ * OK, WARNING or ERROR.
  */
 - (void) setState: (NSString *) newState
 {
@@ -561,7 +561,7 @@
 }
 
 /**
- * (no documentation provided)
+ * 
  */
 - (NSString *) message
 {
@@ -569,7 +569,7 @@
 }
 
 /**
- * (no documentation provided)
+ * 
  */
 - (void) setMessage: (NSString *) newMessage
 {
@@ -579,7 +579,7 @@
 }
 
 /**
- * (no documentation provided)
+ * 
  */
 - (NSString *) error_code
 {
@@ -587,7 +587,7 @@
 }
 
 /**
- * (no documentation provided)
+ * 
  */
 - (void) setError_code: (NSString *) newError_code
 {
