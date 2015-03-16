@@ -17,7 +17,7 @@ host=<ip_address>
 ```
 
 ###### zookeeper.properties
-Contains the properties to configure ZooKeeper. The only needed option to specify, so far, is the ip address and the port of one of the ZooKeeper installation:
+Contains the properties to configure ZooKeeper. Currently, the only needed property is the ip address and the port of one of the ZooKeeper installation:
 
 ```java
 connectString=<ip_address>:<port>
