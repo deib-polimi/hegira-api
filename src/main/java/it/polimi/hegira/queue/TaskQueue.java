@@ -1,6 +1,7 @@
 package it.polimi.hegira.queue;
 
 import it.polimi.hegira.exceptions.QueueException;
+import it.polimi.hegira.utils.PropertiesManager;
 
 import java.io.IOException;
 
@@ -34,14 +35,14 @@ public class TaskQueue {
 	 * @param queueAddress The address where the RabbitMQ broker is deployed. Default: localhost
 	 * @throws QueueException If a connection cannot be established.
 	 */
-	public TaskQueue(String queueAddress) throws QueueException{
+	public TaskQueue() throws QueueException{
 		
 		factory = new ConnectionFactory();
-		if(queueAddress==null || queueAddress.isEmpty()){
-			factory.setHost("localhost");
-		}else{
-			factory.setHost(queueAddress);
+		String queueProperty = PropertiesManager.getQueueProperty("host");
+		if(queueProperty==null || queueProperty.isEmpty()){
+			throw new QueueException();
 		}
+		factory.setHost(queueProperty);
 		
 		try {
 			connection = factory.newConnection();
@@ -64,8 +65,7 @@ public class TaskQueue {
 					
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new QueueException(e.getMessage());
+			log.error(e.toString(), e);
 		}
 	}
 	
