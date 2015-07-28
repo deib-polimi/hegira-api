@@ -21,6 +21,12 @@ public class Status {
 	}
 	public Status() {
 	}
+	
+	/**
+	 * The status given in response to a REST request.
+	 * Allowed statuses are: OK, WARNING, ERROR.
+	 * @return OK, WARNING or ERROR.
+	 */
 	@org.codehaus.enunciate.ClientName(value = "State")
 	public String getStatus() {
 		return status;
@@ -28,12 +34,21 @@ public class Status {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	/**
+	 * Message associated to the Status response. 
+	 * @return
+	 */
 	public String getMessage() {
 		return message;
 	}
 	public void setMessage(String message) {
 		this.message = message;
 	}
+	
+	/**
+	 * Error code associated with an ERROR Status response. 
+	 * @return
+	 */
 	public String getError_code() {
 		return error_code;
 	}

@@ -84,14 +84,12 @@ public class API implements javax.servlet.ServletContextListener {
 	public Status switchOver(@QueryParam("source") String source,
 							@QueryParam("destination") final List<String> destination,
 							@QueryParam("threads") int threads){
-		System.out.println("dentro switchover");
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
 		//BasicConfigurator.configure();
 		//Check input params number
 		if(source != null && destination != null && destination.size()>=1){
 			//check input content
-			System.out.println("controllo parametri");
 			boolean source_supported = Constants.isSupported(source);
 			List<String> supported_dest = Constants.getSupportedDBfromList(destination);
 			if(source_supported && supported_dest.size() >= 1){

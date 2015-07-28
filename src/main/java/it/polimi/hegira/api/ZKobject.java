@@ -29,24 +29,43 @@ public class ZKobject {
 		this.isSynch = ""+isSynch;
 	}
 	public ZKobject(){}
+	
+	/**
+	 * The lowest extreme of the generated range of unique ids.
+	 * @return The lower extreme of the generated range of unique ids.
+	 */
 	public String getLowExtreme() {
 		return lowExtreme;
 	}
 	public void setLowExtreme(String lowExtreme) {
 		this.lowExtreme = lowExtreme;
 	}
+	
+	/**
+	 * The highest extreme of the generated range of unique ids.
+	 * @return The highest extreme of the generated range of unique ids.
+	 */
 	public String getHighExtreme() {
 		return highExtreme;
 	}
 	public void setHighExtreme(String highExtreme) {
 		this.highExtreme = highExtreme;
 	}
+	/**
+	 * Returns the generated unique id.
+	 * @return The generated unique id.
+	 */
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	/**
+	 * The status given in response to the REST request.
+	 * @return The status given in response to the REST request.
+	 */
 	public Status getRequestStatus() {
 		return requestStatus;
 	}
