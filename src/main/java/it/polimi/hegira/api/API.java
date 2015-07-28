@@ -9,6 +9,7 @@ import java.util.List;
 import it.polimi.hegira.exceptions.QueueException;
 import it.polimi.hegira.queue.Queue;
 import it.polimi.hegira.queue.ServiceQueueMessage;
+import it.polimi.hegira.queue.TaskQueue;
 import it.polimi.hegira.utils.Constants;
 import it.polimi.hegira.utils.DefaultErrors;
 import it.polimi.hegira.utils.DefaultSerializer;
@@ -24,6 +25,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+
+import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.ShutdownSignalException;
 
 /**
  * REST API for data migration and synchronization in Hegira 4Clouds.
@@ -172,9 +176,28 @@ public class API implements javax.servlet.ServletContextListener {
 	public Status recoverMigration(@QueryParam("source") String source,
 							@QueryParam("destination") final List<String> destination,
 							@QueryParam("threads") int threads){
-		//vdpSize is not considered when recovering
-		//as it is automatically retrieved from ZooKeeper
-		return MigrateOrRecover(PartitionedCommand.RECOVER, source, destination, threads, 0);
+		try {
+			TaskQueue taskQueue = new TaskQueue();
+			boolean purged = taskQueue.purgeQueue();
+			if(purged){
+				taskQueue.disconnect();
+				//vdpSize is not considered when recovering
+				//as it is automatically retrieved from ZooKeeper
+				return MigrateOrRecover(PartitionedCommand.RECOVER, source, destination, threads, 0);
+			} else {
+				throw new IOException(DefaultErrors.unpurgeableQueue);
+			}
+	 
+		} catch (QueueException e) {
+			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.queueError),
+					DefaultErrors.getErrorNumber(DefaultErrors.queueError));
+		} catch (ShutdownSignalException | ConsumerCancelledException
+				| IOException | InterruptedException e) {
+			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.unpurgeableQueue),
+					DefaultErrors.getErrorNumber(DefaultErrors.unpurgeableQueue));
+		}
+		
+		
 	}
 
 	/**

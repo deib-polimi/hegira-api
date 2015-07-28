@@ -12,6 +12,7 @@ public class DefaultErrors {
 	public static String queueError = "Error 9: Impossible to access the queue.";
 	public static String vdpError = "Error 10: Couldn't set VDP size.";
 	public static String vdpRetrievalError = "Error 11: Couldn't get VDP size.";
+	public static String unpurgeableQueue = "Error 12: Couldn't purge the Task Queue.";
 	
 	
 	public static String getErrorNumber(String error){
