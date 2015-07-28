@@ -137,7 +137,7 @@
         </configuration>
       </plugin>
     </plugins>
-    <finalName>Hegira :: API</finalName>
+    <finalName>hegira-api</finalName>
   </build>
   
    <reporting>
