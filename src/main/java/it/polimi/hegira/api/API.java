@@ -16,7 +16,6 @@ import it.polimi.hegira.utils.PropertiesManager;
 import it.polimi.hegira.zkWrapper.ZKserver;
 
 import javax.servlet.ServletContextEvent;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -141,7 +140,7 @@ public class API implements javax.servlet.ServletContextListener {
 	 * the source to the destination databases.
 	 * This type of data migration should be executed in case one wants also to take advantage of data <b>synchronization<b/>.
 	 * This type of data migration is recoverable, i.e., in case of a crash of a component
-	 * the data migration can be restarted from scratch. 
+	 * the data migration can be restarted from the point where it stopped. 
 	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
 	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
 	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
@@ -155,6 +154,41 @@ public class API implements javax.servlet.ServletContextListener {
 							@QueryParam("destination") final List<String> destination,
 							@QueryParam("threads") int threads,
 							@QueryParam("vdpSize") int vdpSize){
+		return MigrateOrRecover(PartitionedCommand.MIGRATE, source, destination, threads, vdpSize);
+	}
+	
+	/**
+	 * Instructs the components (SRC and TWC) to perform the RECOVERY of a previous complete <b>ONLINE</b> 
+	 * data switch over from the source to the destination databases.
+	 * The VDP size is automatically retrieved from ZooKeeper.
+	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
+	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
+	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
+	 * @return A Status object stating whether the command has been properly executed.
+	 */
+	@POST
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Path("/recover")
+	public Status recoverMigration(@QueryParam("source") String source,
+							@QueryParam("destination") final List<String> destination,
+							@QueryParam("threads") int threads){
+		//vdpSize is not considered when recovering
+		//as it is automatically retrieved from ZooKeeper
+		return MigrateOrRecover(PartitionedCommand.RECOVER, source, destination, threads, 0);
+	}
+
+	/**
+	 * Starts a new partitioned data migration from scratch OR recovers the previous one.
+	 * @param cmd MIGRATE or RECOVER
+	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
+	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
+	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
+	 * @param vdpSize When migrating from scratch represents the exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities). 
+	 * @return A Status object stating whether the command has been properly executed.
+	 */
+	private Status MigrateOrRecover(PartitionedCommand cmd, String source, 
+			final List<String> destination, int threads, int vdpSize){
+
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
 		//BasicConfigurator.configure();
@@ -172,23 +206,45 @@ public class API implements javax.servlet.ServletContextListener {
 				
 				ZKserver zKserver = new ZKserver(PropertiesManager.getZkProperty("connectString"));
 				try {
-					if(vdpSize<2 || vdpSize>5)
-						return new Status(Constants.STATUS_ERROR, 
-								"Provide a reasonable exponent p so that 10^p represets"
-								+ " a resonable VDP size (i.e., 1 < p < 6)",
-								"UNKOWN");
-					zKserver.setVDPsize(vdpSize);
+					if(cmd.equals(PartitionedCommand.MIGRATE)){
+						if(vdpSize<2 || vdpSize>5)
+							return new Status(Constants.STATUS_ERROR, 
+									"Provide a reasonable exponent p so that 10^p represets"
+									+ " a resonable VDP size (i.e., 1 < p < 6)",
+									"UNKOWN");
+						zKserver.setVDPsize(vdpSize);
+					}else if(cmd.equals(PartitionedCommand.RECOVER)){
+						int vdPsize = zKserver.getVDPsize();
+						if(vdPsize<2 || vdPsize>5)
+							return new Status(Constants.STATUS_ERROR, 
+									"Retrieved VDP size is not correct: "
+									+ vdPsize,
+									"UNKOWN");
+					}
+					
 				} catch (Exception e1) {
-					return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.vdpError),
-							DefaultErrors.getErrorNumber(DefaultErrors.vdpError));
+					if(cmd.equals(PartitionedCommand.MIGRATE)){
+						return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.vdpError),
+								DefaultErrors.getErrorNumber(DefaultErrors.vdpError));
+					} else if(cmd.equals(PartitionedCommand.RECOVER)){
+						return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.vdpRetrievalError),
+								DefaultErrors.getErrorNumber(DefaultErrors.vdpRetrievalError));
+					}
+					
 				}
+				
 				
 				try {
 					
 					if(queue.checkPresence()){
 						log.info("Components present");
 						ServiceQueueMessage sqm = new ServiceQueueMessage();
-						sqm.setCommand("switchoverPartitioned");
+						if(cmd.equals(PartitionedCommand.MIGRATE)){
+							sqm.setCommand("switchoverPartitioned");
+						} else if(cmd.equals(PartitionedCommand.RECOVER)){
+							sqm.setCommand("recover");
+						}
+						
 						sqm.setSource(source);
 						sqm.setDestination(destination);
 						sqm.setThreads(threads);
@@ -219,9 +275,9 @@ public class API implements javax.servlet.ServletContextListener {
 			return new Status(Constants.STATUS_ERROR, DefaultErrors.getErrorMessage(DefaultErrors.fewParameters),
 								DefaultErrors.getErrorNumber(DefaultErrors.fewParameters));
 		}
+	
 	}
 	
-
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {}
 
@@ -239,4 +295,6 @@ public class API implements javax.servlet.ServletContextListener {
 			e.printStackTrace();
 		}
 	}
+	
+	private enum PartitionedCommand{MIGRATE, RECOVER}
 }
