@@ -230,15 +230,15 @@ public class API implements javax.servlet.ServletContextListener {
 				ZKserver zKserver = new ZKserver(PropertiesManager.getZkProperty("connectString"));
 				try {
 					if(cmd.equals(PartitionedCommand.MIGRATE)){
-						if(vdpSize<2 || vdpSize>5)
+						if(vdpSize<1 || vdpSize>5)
 							return new Status(Constants.STATUS_ERROR, 
-									"Provide a reasonable exponent p so that 10^p represets"
+									"Provide a reasonable exponent p so that 10^p represents"
 									+ " a resonable VDP size (i.e., 1 < p < 6)",
 									"UNKOWN");
 						zKserver.setVDPsize(vdpSize);
 					}else if(cmd.equals(PartitionedCommand.RECOVER)){
 						int vdPsize = zKserver.getVDPsize();
-						if(vdPsize<2 || vdPsize>5)
+						if(vdPsize<1 || vdPsize>5)
 							return new Status(Constants.STATUS_ERROR, 
 									"Retrieved VDP size is not correct: "
 									+ vdPsize,
