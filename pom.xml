@@ -4,7 +4,7 @@
   <artifactId>hegira-api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>Hegira :: API</name>
+  <name>hegira-api</name>
   <repositories>
 
     <repository>
@@ -137,7 +137,7 @@
         </configuration>
       </plugin>
     </plugins>
-    <finalName>Hegira :: API</finalName>
+    <finalName>hegira-api</finalName>
   </build>
   
    <reporting>
