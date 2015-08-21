@@ -149,6 +149,7 @@ public class API implements javax.servlet.ServletContextListener {
 	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
 	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
 	 * @param vdpSize The exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities). 
+	 * @param srts The number of SRTs (i.e., the number of parallel threads reading from the source database).
 	 * @return A Status object stating whether the command has been properly executed.
 	 */
 	@POST
@@ -157,8 +158,9 @@ public class API implements javax.servlet.ServletContextListener {
 	public Status switchOverPartitioned(@QueryParam("source") String source,
 							@QueryParam("destination") final List<String> destination,
 							@QueryParam("threads") int threads,
-							@QueryParam("vdpSize") int vdpSize){
-		return MigrateOrRecover(PartitionedCommand.MIGRATE, source, destination, threads, vdpSize);
+							@QueryParam("vdpSize") int vdpSize,
+							@QueryParam("srts") int srts){
+		return MigrateOrRecover(PartitionedCommand.MIGRATE, source, destination, threads, vdpSize, srts);
 	}
 	
 	/**
@@ -168,6 +170,7 @@ public class API implements javax.servlet.ServletContextListener {
 	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
 	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
 	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
+	 *  @param srts The number of SRTs (i.e., the number of parallel threads reading from the source database).
 	 * @return A Status object stating whether the command has been properly executed.
 	 */
 	@POST
@@ -175,7 +178,8 @@ public class API implements javax.servlet.ServletContextListener {
 	@Path("/recover")
 	public Status recoverMigration(@QueryParam("source") String source,
 							@QueryParam("destination") final List<String> destination,
-							@QueryParam("threads") int threads){
+							@QueryParam("threads") int threads,
+							@QueryParam("srts") int srts){
 		try {
 			TaskQueue taskQueue = new TaskQueue();
 			boolean purged = taskQueue.purgeQueue();
@@ -183,7 +187,7 @@ public class API implements javax.servlet.ServletContextListener {
 				taskQueue.disconnect();
 				//vdpSize is not considered when recovering
 				//as it is automatically retrieved from ZooKeeper
-				return MigrateOrRecover(PartitionedCommand.RECOVER, source, destination, threads, 0);
+				return MigrateOrRecover(PartitionedCommand.RECOVER, source, destination, threads, 0, srts);
 			} else {
 				throw new IOException(DefaultErrors.unpurgeableQueue);
 			}
@@ -206,11 +210,12 @@ public class API implements javax.servlet.ServletContextListener {
 	 * @param source The source database identifier (e.g., DATASTORE, TABLES).
 	 * @param destination The destination database identifier (e.g., DATASTORE, TABLES).
 	 * @param threads The number of TWT (i.e., the number of parallel threads writing towards the target database).
-	 * @param vdpSize When migrating from scratch represents the exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities). 
+	 * @param vdpSize When migrating from scratch represents the exponent for the base number 10 which, together, define the VDP size (e.g., 2 means that each VDP will contain 100 entities).
+	 * @param srts The number of SRTs (i.e., the number of parallel threads reading from the source database). 
 	 * @return A Status object stating whether the command has been properly executed.
 	 */
 	private Status MigrateOrRecover(PartitionedCommand cmd, String source, 
-			final List<String> destination, int threads, int vdpSize){
+			final List<String> destination, int threads, int vdpSize, int srts){
 
 		String logs = Thread.currentThread().getContextClassLoader().getResource(Constants.LOGS_PATH).getFile();
 		PropertyConfigurator.configure(logs);
@@ -271,6 +276,7 @@ public class API implements javax.servlet.ServletContextListener {
 						sqm.setSource(source);
 						sqm.setDestination(destination);
 						sqm.setThreads(threads);
+						sqm.setSRTs_NO(srts);
 						
 						byte[] ssqm = DefaultSerializer.serialize(sqm);
 						queue.publish("SRC", ssqm);
