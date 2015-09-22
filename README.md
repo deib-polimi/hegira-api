@@ -42,3 +42,9 @@ hegira-api component also exposes a set of [Rest API on top of Apache ZooKeeper]
 2. Check the synchronization status.
 
 The same services are obtainable by IaaS applications by means of [zkWrapper-client](https://github.com/deib-polimi/hegira-zkWrapper-client) library.
+
+##License##
+
+Licensed under the [Apache License, Version 2.0][1]
+
+[1]: http://www.apache.org/licenses/LICENSE-2.0
